@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getx_demo/core/game_config.dart';
 import 'package:getx_demo/core/game_image_provider.dart';
 
 import 'game_object.dart';
@@ -16,21 +17,36 @@ class GameEngine extends GetxController with GetSingleTickerProviderStateMixin {
 
   Timer? _timer;
 
-  Future<void> init({String? tag}) async {
+  Future<void> init({GameConfig? config}) async {
     if (_initialized) {
       return;
     }
     _initialized = true;
-    Get.put(GameImageProvider(), permanent: true, tag: tag);
+    Get.put(
+      GameImageProvider(),
+      permanent: true,
+    );
+    Get.put(
+      config ?? const GameConfig(),
+      permanent: true,
+    );
     startGameLoop();
   }
 
-  void addGameObject(GameObject gameObject) {
-    _gameObjects.add(gameObject);
+  void addGameObjects(List<GameObject> objects) {
+    _gameObjects.addAll(objects);
   }
 
   void removeGameObject(GameObject gameObject) {
+    gameObject.dispose();
     _gameObjects.remove(gameObject);
+  }
+
+  void removeAllGameObjects() {
+    for (var object in _gameObjects) {
+      object.dispose();
+    }
+    _gameObjects.clear();
   }
 
   void updateGameObjects() {
@@ -45,14 +61,18 @@ class GameEngine extends GetxController with GetSingleTickerProviderStateMixin {
   }
 
   void startGameLoop() {
-    _timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+    _timer = Timer.periodic(
+        Duration(milliseconds: Get.find<GameConfig>().msPerFrame), (timer) {
       updateGameObjects();
     });
   }
 
   Widget getView() {
-    return CustomPaint(
-      painter: GamePainter(_gameObjects),
+    return GetBuilder(
+      init: this,
+      builder: (_) => CustomPaint(
+        painter: GamePainter(_gameObjects),
+      ),
     );
   }
 

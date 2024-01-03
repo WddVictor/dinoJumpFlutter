@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_demo/core/game_engine.dart';
-import 'package:getx_demo/dino_jump/dino_jump_constants.dart';
 
 import 'dino_jump_view_model.dart';
 
@@ -14,7 +13,12 @@ class DinoJumpView extends GetView<DinoJumpViewModel> {
       appBar: AppBar(
         title: const Text('Dinosaur Jump'),
       ),
-      body: Get.find<GameEngine>().getView(),
+      body: GestureDetector(
+        onTap: controller.onTap,
+        child: SizedBox.expand(
+          child: Get.find<GameEngine>().getView(),
+        ),
+      ),
     );
   }
 }

@@ -15,7 +15,7 @@ class WelcomeView extends GetView<WelcomeViewModel> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Obx(() {
-              print("xyf build logo");
+              print("[debug] build logo");
               return ColorFiltered(
                 colorFilter: ColorFilter.mode(
                   controller.currentColor.value,
@@ -30,7 +30,7 @@ class WelcomeView extends GetView<WelcomeViewModel> {
             }),
             Obx(
               () {
-                print("xyf build step");
+                print("[debug] build step");
                 return TextButton(
                   onPressed: controller.isReady ? controller.start : null,
                   child: Text(
